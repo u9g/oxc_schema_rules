@@ -1,0 +1,12 @@
+[package]
+name = "oxc-schema-rules"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+apollo-parser = "0.5.3"
+miette = { version = "5.10.0", features = ["fancy"] }
+thiserror = "1.0.44"
+trustfall = "0.6.0"
