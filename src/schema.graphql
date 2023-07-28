@@ -229,24 +229,24 @@ type ClassMethod {
 }
 
 interface Class {
-  is_abstract: Boolean!
-
   """
   if the extended expression is an identifier, this will give you the name
   """
   extended_class_name: String
+  is_abstract: Boolean!
 
   constructor: [ClassMethod!]!
-  method: [ClassMethod!]!
   getter: [ClassMethod!]!
-  setter: [ClassMethod!]!
+  method: [ClassMethod!]!
   property: [ClassProperty!]!
+  setter: [ClassMethod!]!
+
+  entire_class_span: Span!
   # TODO: some way to fall back from name_span to entire_class span
   """
   Doesn't exist on anonymous classes
   """
   name_span: Span
-  entire_class_span: Span!
 }
 
 interface Type {
@@ -397,31 +397,27 @@ type JSXElementAST implements JSXElement & Expression & ASTNode & HasSpan {
 }
 
 type ClassAST implements ASTNode & Class & HasSpan {
-  is_abstract: Boolean!
-
   """
   if the extended expression is an identifier, this will give you the name
   """
   extended_class_name: String
+  is_abstract: Boolean!
 
-  constructor: [ClassMethod!]!
-  method: [ClassMethod!]!
-  getter: [ClassMethod!]!
-  setter: [ClassMethod!]!
-  property: [ClassProperty!]!
+  entire_class_span: Span!
   # TODO: some way to fall back from name_span to entire_class span
   """
   Doesn't exist on anonymous classes
   """
   name_span: Span
-  entire_class_span: Span!
-
-  # ASTNode
   parent: ASTNode
-  ancestor: [ASTNode!]!
-
-  # HasSpan
   span: Span!
+
+  ancestor: [ASTNode!]!
+  constructor: [ClassMethod!]!
+  getter: [ClassMethod!]!
+  method: [ClassMethod!]!
+  property: [ClassProperty!]!
+  setter: [ClassMethod!]!
 }
 
 type ReturnStatementAST implements ASTNode & HasSpan {
