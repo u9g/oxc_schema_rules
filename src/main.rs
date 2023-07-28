@@ -17,6 +17,56 @@ struct ManyErrors {
     others: Vec<miette::Report>,
 }
 
+fn field_naming(schema_text: &str) -> Vec<miette::Report> {
+    let top_level_definitions = Parser::new(schema_text).parse().document();
+
+    let schema = Schema::parse(schema_text).unwrap();
+
+    let adapter = SchemaAdapter::new(&schema);
+
+    let mut vars: BTreeMap<_, FieldValue> = BTreeMap::new();
+    vars.insert("caps_camel_case", "[A-Z][a-zA-Z0-9]+".into());
+
+    execute_query(
+        &Schema::parse(SchemaAdapter::schema_text()).unwrap(),
+        adapter.into(),
+        r#"
+        query {
+            Entrypoint {
+                name @output(name: "edge_and_get_the_span_automatically") @filter(op: "not_regex", value: ["$caps_camel_case"])
+            }
+        }
+        "#,
+        vars,
+    )
+    .unwrap()
+    .map(|row| {
+        let type_wanted = top_level_definitions
+            .definitions()
+            .filter_map(|x| {
+                let Definition::ObjectTypeDefinition(otd) = x else {
+                    return None;
+                };
+                Some(otd)
+            })
+            .find(|x| x.name().unwrap().text() == "RootSchemaQuery");
+
+        let fdefs = type_wanted.unwrap().fields_definition().unwrap();
+
+        let edge_name = &row["edge_and_get_the_span_automatically"];
+        let fdef = fdefs.field_definitions().find(|x| x.name().unwrap().text() == edge_name.as_str().unwrap()).unwrap();
+        let range = fdef.name().unwrap().ident_token().unwrap().text_range();
+        let st: usize = range.start().into();
+        let end: usize = range.end().into();
+        miette!(
+            code = "trustfall::caps_camel_for_root_query_name_edges",
+            labels = vec![LabeledSpan::at(st..end, "rewrite in caps camel case")],
+            "Edges in RootSchemaQuery must be written in capitalized camel case"
+        )
+    })
+    .collect::<Vec<_>>()
+}
+
 fn anything_that_ends_with_ast_must_impl_astnode(schema_text: &str) -> Vec<miette::Report> {
     let top_level_definitions = Parser::new(schema_text).parse().document();
 
@@ -293,6 +343,7 @@ fn main() -> Result<()> {
 
     let errs = array_type_must_have_bang(schema_text)
         .into_iter()
+        .chain(field_naming(schema_text))
         .chain(anything_that_ends_with_ast_must_impl_astnode(schema_text))
         .chain(anything_that_impls_astnode_must_ends_with_ast(schema_text))
         // .chain(bottom_heavy_fields(schema_text))

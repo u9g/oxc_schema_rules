@@ -49,6 +49,9 @@ All the possible data types where querying can begin in this API.
 """
 type RootSchemaQuery {
   File: [File!]!
+
+  apple_orange: File!
+  banana_strawberry: [File!]!
 }
 
 type File {
