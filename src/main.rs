@@ -127,6 +127,52 @@ fn anything_that_impls_astnode_must_ends_with_ast(schema_text: &str) -> Vec<miet
     .collect::<Vec<_>>()
 }
 
+fn array_type_must_have_bang(schema_text: &str) -> Vec<miette::Report> {
+    let top_level_definitions = Parser::new(schema_text).parse().document();
+
+    top_level_definitions
+        .definitions()
+        .filter_map(|ref x| {
+            let field_definitions = match x {
+                Definition::ObjectTypeDefinition(otd) => otd.fields_definition(),
+                Definition::InterfaceTypeDefinition(itd) => itd.fields_definition(),
+                _ => return None,
+            }
+            .unwrap();
+
+            Some(field_definitions.field_definitions().filter_map(|field| {
+                let field_type = field.ty().unwrap();
+                if is_list_type(&field_type) {
+                    let ty = match field_type {
+                        Type::ListType(lt) => lt.ty().unwrap(),
+                        Type::NonNullType(nnt) => nnt.list_type().unwrap().ty().unwrap(),
+                        _ => unreachable!(),
+                    };
+                    let Type::NamedType(nullish_type) = ty else {
+                        return None;
+                    };
+                    let range = nullish_type
+                        .name()
+                        .unwrap()
+                        .ident_token()
+                        .unwrap()
+                        .text_range();
+                    let st: usize = range.start().into();
+                    let end: usize = range.end().into();
+                    Some(miette!(
+                        code = "trustfall::no_list_inner_type_nullability",
+                        labels = vec![LabeledSpan::at(st..end, "add ! after type in list")],
+                        "types in a list must have a ! suffix"
+                    ))
+                } else {
+                    None
+                }
+            }))
+        })
+        .flatten()
+        .collect::<Vec<_>>()
+}
+
 fn is_primitive_type_name(type_name: &str) -> bool {
     type_name == "String" || type_name == "Int" || type_name == "Float" || type_name == "Boolean"
 }
@@ -245,10 +291,11 @@ fn main() -> Result<()> {
 
     let schema_text = std::include_str!("./schema.graphql");
 
-    let errs = anything_that_ends_with_ast_must_impl_astnode(schema_text)
+    let errs = array_type_must_have_bang(schema_text)
         .into_iter()
+        .chain(anything_that_ends_with_ast_must_impl_astnode(schema_text))
         .chain(anything_that_impls_astnode_must_ends_with_ast(schema_text))
-        .chain(bottom_heavy_fields(schema_text))
+        // .chain(bottom_heavy_fields(schema_text))
         .map(|err| err.with_source_code(schema_text))
         .collect::<Vec<_>>();
 

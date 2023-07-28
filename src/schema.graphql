@@ -65,6 +65,10 @@ type File {
   ast_node: [ASTNode!]!
 }
 
+type TypeWithBadField {
+  array_with_no_bang_on_inner_type: [String]!
+}
+
 type PathPart {
   name: String!
   is_first: Boolean!
