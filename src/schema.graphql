@@ -74,7 +74,7 @@ type PathPart {
   prev: PathPart
 }
 
-type SpecificImport {
+type SpecificImport implements ASTNode & HasSpan {
   """
   Name in original file
   """
@@ -83,6 +83,10 @@ type SpecificImport {
   Aliased name, in "import {X as Y} from 'source'", this would be Y, but in "import {A} from 'source'" this owuld be A
   """
   local_name: String!
+  # ASTNode
+  parent: ASTNode
+  ancestor: [ASTNode!]!
+  # HasSpan
   span: Span!
 }
 
