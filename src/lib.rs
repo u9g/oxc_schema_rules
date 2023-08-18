@@ -5,6 +5,7 @@ use std::{
 
 use serde::Deserialize;
 use trustfall::{execute_query, FieldValue, Schema, SchemaAdapter, TryIntoStruct};
+use wasm_bindgen::prelude::wasm_bindgen;
 
 const INTROSPECTION_QUERY: &str = r#"
         query {
@@ -31,16 +32,15 @@ struct IntrospectionOutput {
     edge: HashSet<String>,
 }
 
-pub fn diff_schemas(schema_one: &str, schema_two: &str) -> String {
+#[wasm_bindgen]
+pub fn diff_schemas(schema_one_str: &str, schema_two_str: &str) -> String {
     let schema_adapter_schema = &Schema::parse(SchemaAdapter::schema_text()).unwrap();
 
-    let schema_one_str = include_str!("./schema1.graphql");
     let schema_one = Schema::parse(schema_one_str).unwrap();
     let adapter_one = SchemaAdapter::new(&schema_one);
     let arc_one: Arc<_> = adapter_one.into();
     let data_one = run_introspection_query(schema_adapter_schema, arc_one.clone());
 
-    let schema_two_str = include_str!("./schema2.graphql");
     let schema_two = Schema::parse(schema_two_str).unwrap();
     let adapter_two = SchemaAdapter::new(&schema_two);
     let arc_two: Arc<_> = adapter_two.into();
