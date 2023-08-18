@@ -9,4 +9,5 @@ edition = "2021"
 apollo-parser = "0.5.3"
 miette = { version = "5.10.0", features = ["fancy"] }
 thiserror = "1.0.44"
-trustfall = "0.6.0"
+serde = { version = "1.0", features = ["derive"] }
+trustfall = { git = "https://github.com/obi1kenobi/trustfall" }

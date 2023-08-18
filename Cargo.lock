@@ -253,9 +253,9 @@ checksum = "616cde7c720bb2bb5824a224687d8f77bfd38922027f01d825cd7453be5099fb"
 
 [[package]]
 name = "itertools"
-version = "0.10.5"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b0fd2260e829bddf4cb6ea802289de2f86d6a7a690192fbe91b3f46e0f2c8473"
+checksum = "b1c173a5686ce8bfa551b3563d0c2170bf24ca44da99c7ca4bfdab5418c3fe57"
 dependencies = [
  "either",
 ]
@@ -328,7 +328,7 @@ checksum = "49e7bc1560b95a3c4a25d03de42fe76ca718ab92d1a22a55b9b4cf67b3ae635c"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.27",
+ "syn",
 ]
 
 [[package]]
@@ -367,6 +367,7 @@ version = "0.1.0"
 dependencies = [
  "apollo-parser",
  "miette",
+ "serde",
  "thiserror",
  "trustfall",
 ]
@@ -401,7 +402,7 @@ dependencies = [
  "pest_meta",
  "proc-macro2",
  "quote",
- "syn 2.0.27",
+ "syn",
 ]
 
 [[package]]
@@ -523,7 +524,7 @@ checksum = "401797fe7833d72109fedec6bfcbe67c0eed9b99772f26eb8afd261f0abc6fd3"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.27",
+ "syn",
 ]
 
 [[package]]
@@ -593,17 +594,6 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "1.0.109"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72b64191b275b66ffe2469e8af2c1cfe3bafa67b529ead792a6d0160888b4237"
-dependencies = [
- "proc-macro2",
- "quote",
- "unicode-ident",
-]
-
-[[package]]
-name = "syn"
 version = "2.0.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b60f673f44a8255b9c8c657daf66a596d435f2da81a555b06dc644d080ba45e0"
@@ -657,14 +647,13 @@ checksum = "090198534930841fab3a5d1bb637cde49e339654e606195f8d9c76eeb081dc96"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.27",
+ "syn",
 ]
 
 [[package]]
 name = "trustfall"
-version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e45b215ab522a1876f3fd95a5b2e9a047be247e96280f48ac9501ede69d08982"
+version = "0.6.1"
+source = "git+https://github.com/obi1kenobi/trustfall#1dddc0f47e18e7a0912d0924935c6d56c9283203"
 dependencies = [
  "anyhow",
  "trustfall_core",
@@ -674,8 +663,7 @@ dependencies = [
 [[package]]
 name = "trustfall_core"
 version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "994d4a15d0cf514b856567f85a166ee0e2427f845b194b3744adeb8caf674385"
+source = "git+https://github.com/obi1kenobi/trustfall#1dddc0f47e18e7a0912d0924935c6d56c9283203"
 dependencies = [
  "async-graphql-parser",
  "async-graphql-value",
@@ -691,13 +679,12 @@ dependencies = [
 
 [[package]]
 name = "trustfall_derive"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "486543a0d60e041e8fdf8595a8a0686173ad0071d07e11d8c228750ab28767df"
+version = "0.3.1"
+source = "git+https://github.com/obi1kenobi/trustfall#1dddc0f47e18e7a0912d0924935c6d56c9283203"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 1.0.109",
+ "syn",
 ]
 
 [[package]]
